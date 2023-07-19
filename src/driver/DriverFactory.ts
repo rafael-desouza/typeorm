@@ -18,6 +18,7 @@ import {Connection} from "../connection/Connection";
 import {SapDriver} from "./sap/SapDriver";
 import {BetterSqlite3Driver} from "./better-sqlite3/BetterSqlite3Driver";
 import {CapacitorDriver} from "./capacitor/CapacitorDriver";
+import { FirebirdDriver } from "./firebird/FirebirdDriver";
 
 /**
  * Helps to create drivers.
@@ -66,30 +67,29 @@ export class DriverFactory {
                 return new AuroraDataApiPostgresDriver(connection);
             case "capacitor":
                 return new CapacitorDriver(connection);
+            case "firebird":
+                return new FirebirdDriver(connection);
             default:
-                throw new MissingDriverError(
-                    type,
-                    [
-                        "aurora-data-api",
-                        "aurora-data-api-pg",
-                        "better-sqlite3",
-                        "capacitor",
-                        "cockroachdb",
-                        "cordova",
-                        "expo",
-                        "mariadb",
-                        "mongodb",
-                        "mssql",
-                        "mysql",
-                        "nativescript",
-                        "oracle",
-                        "postgres",
-                        "react-native",
-                        "sap",
-                        "sqlite",
-                        "sqljs",
-                    ]
-                );
+                throw new MissingDriverError(type, [
+                    "aurora-data-api",
+                    "aurora-data-api-pg",
+                    "better-sqlite3",
+                    "capacitor",
+                    "cockroachdb",
+                    "cordova",
+                    "expo",
+                    "mariadb",
+                    "mongodb",
+                    "mssql",
+                    "mysql",
+                    "nativescript",
+                    "oracle",
+                    "postgres",
+                    "react-native",
+                    "sap",
+                    "sqlite",
+                    "sqljs",
+                ]);
         }
     }
 
