@@ -82,7 +82,7 @@ export class FirebirdDriver implements Driver {
         bigint: { width: 20 },
     };
 
-    spatialTypes: ColumnType[];
+    spatialTypes: ColumnType[] = [];
 
     withLengthColumnTypes: ColumnType[] = ["char", "varchar", "character"];
 
@@ -225,16 +225,16 @@ export class FirebirdDriver implements Driver {
         return [sql, escapedParameters];
     }
     escape(columnName: string): string {
-        return "`" + columnName + "`";
+        return columnName.toUpperCase();
     }
+
     buildTableName(
         tableName: string,
         schema?: string | undefined,
         database?: string | undefined
     ): string {
-        return `${tableName}`;
+        return tableName.toUpperCase();
     }
-
     /**
      * Parse a target table name or other types and return a normalized table definition.
      */

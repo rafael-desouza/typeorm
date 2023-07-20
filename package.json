@@ -6,8 +6,8 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "author": {
-    "name": "Umed Khudoiberdiev",
-    "email": "pleerock.me@gmail.com"
+    "name": "rafael-desouza",
+    "email": "rafaelferreiradesouza7@gmail.com"
   },
   "exports": {
     ".": {
@@ -121,6 +121,7 @@
     "mssql": "^6.3.1",
     "mysql": "^2.18.1",
     "mysql2": "^2.2.5",
+    "node-firebird": "^1.1.5",
     "oracledb": "^5.1.0",
     "pg": "^8.5.1",
     "pg-query-stream": "^4.0.0",
@@ -211,10 +212,9 @@
     "glob": "^7.1.6",
     "js-yaml": "^4.0.0",
     "mkdirp": "^1.0.4",
-    "node-firebird": "^1.1.5",
     "reflect-metadata": "^0.1.13",
     "sha.js": "^2.4.11",
-    "tslib": "^2.1.0",
+    "tslib": "^2.6.0",
     "uuid": "^8.3.2",
     "xml2js": "^0.4.23",
     "yargs": "^17.0.1",
