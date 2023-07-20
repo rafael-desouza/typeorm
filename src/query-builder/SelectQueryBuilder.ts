@@ -38,6 +38,7 @@ import {AuroraDataApiDriver} from "../driver/aurora-data-api/AuroraDataApiDriver
 import {CockroachDriver} from "../driver/cockroachdb/CockroachDriver";
 import {EntityNotFoundError} from "../error/EntityNotFoundError";
 import { TypeORMError } from "../error";
+import { FirebirdDriver } from "../driver/firebird/FirebirdDriver";
 
 /**
  * Allows to build complex sql queries in a fashion way and execute those queries.
@@ -1666,7 +1667,16 @@ export class SelectQueryBuilder<Entity> extends QueryBuilder<Entity> implements 
             if (offset)
                 return " OFFSET " + offset + " ROWS";
 
-        } else {
+        } else if (this.connection.driver instanceof FirebirdDriver) {
+
+            if (limit && offset)
+                return " ROWS " + (offset + 1) + " TO " + (offset + limit);
+            if (limit)
+                return " ROWS " + limit;
+            if (offset)
+                return " ROWS 1 TO " + offset;
+        }
+        else {
             if (limit && offset)
                 return " LIMIT " + limit + " OFFSET " + offset;
             if (limit)
@@ -1937,14 +1947,14 @@ export class SelectQueryBuilder<Entity> extends QueryBuilder<Entity> implements 
             .limit(undefined)
             .skip(undefined)
             .take(undefined)
-            .select(countSql, "cnt")
+            .select(countSql, "CNT")
             .setOption("disable-global-order")
             .loadRawResults(queryRunner);
 
-        if (!results || !results[0] || !results[0]["cnt"])
+        if (!results || !results[0] || !results[0]["CNT"])
             return 0;
 
-        return parseInt(results[0]["cnt"]);
+        return parseInt(results[0]["CNT"]);
     }
 
     /**
