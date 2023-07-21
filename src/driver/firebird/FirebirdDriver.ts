@@ -208,15 +208,22 @@ export class FirebirdDriver implements Driver {
             .map((parameter) => "(:(\\.\\.\\.)?" + parameter + "\\b)")
             .join("|");
         sql = sql.replace(new RegExp(keys, "g"), (key: string) => {
+            let spreadParam: boolean;
             let value: any;
+
             if (key.substr(0, 4) === ":...") {
+                spreadParam = true;
                 value = parameters[key.substr(4)];
             } else {
+                spreadParam = false;
                 value = parameters[key.substr(1)];
             }
 
             if (value instanceof Function) {
                 return value();
+            } else if (spreadParam) {
+                value.forEach((param: any) => escapedParameters.push(param));
+                return new Array(value.length).fill("?").join(", ");
             } else {
                 escapedParameters.push(value);
                 return "?";

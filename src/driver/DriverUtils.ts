@@ -1,11 +1,10 @@
-import {Driver} from "./Driver";
-import {hash,shorten} from "../util/StringUtils";
+import { Driver } from "./Driver";
+import { hash, shorten } from "../util/StringUtils";
 
 /**
  * Common driver utility functions.
  */
 export class DriverUtils {
-
     // -------------------------------------------------------------------------
     // Public Static Methods
     // -------------------------------------------------------------------------
@@ -14,11 +13,20 @@ export class DriverUtils {
      * Normalizes and builds a new driver options.
      * Extracts settings from connection url and sets to a new options object.
      */
-    static buildDriverOptions(options: any, buildOptions?: { useSid: boolean }): any {
+    static buildDriverOptions(
+        options: any,
+        buildOptions?: { useSid: boolean }
+    ): any {
         if (options.url) {
-            const urlDriverOptions = this.parseConnectionUrl(options.url) as { [key: string]: any };
+            const urlDriverOptions = this.parseConnectionUrl(options.url) as {
+                [key: string]: any;
+            };
 
-            if (buildOptions && buildOptions.useSid && urlDriverOptions.database) {
+            if (
+                buildOptions &&
+                buildOptions.useSid &&
+                urlDriverOptions.database
+            ) {
                 urlDriverOptions.sid = urlDriverOptions.database;
             }
 
@@ -36,11 +44,20 @@ export class DriverUtils {
     /**
      * buildDriverOptions for MongodDB only to support replica set
      */
-    static buildMongoDBDriverOptions(options: any, buildOptions?: { useSid: boolean }): any {
+    static buildMongoDBDriverOptions(
+        options: any,
+        buildOptions?: { useSid: boolean }
+    ): any {
         if (options.url) {
-            const urlDriverOptions = this.parseMongoDBConnectionUrl(options.url) as { [key: string]: any };
+            const urlDriverOptions = this.parseMongoDBConnectionUrl(
+                options.url
+            ) as { [key: string]: any };
 
-            if (buildOptions && buildOptions.useSid && urlDriverOptions.database) {
+            if (
+                buildOptions &&
+                buildOptions.useSid &&
+                urlDriverOptions.database
+            ) {
                 urlDriverOptions.sid = urlDriverOptions.database;
             }
 
@@ -55,7 +72,6 @@ export class DriverUtils {
         return Object.assign({}, options);
     }
 
-
     /**
      * Joins and shortens alias if needed.
      *
@@ -69,16 +85,29 @@ export class DriverUtils {
      *
      * @return An alias that is no longer than the divers max alias length.
      */
-     static buildAlias({ maxAliasLength }: Driver, buildOptions: { shorten?: boolean, joiner?: string } | string, ...alias: string[]): string {
+    static buildAlias(
+        { maxAliasLength, escape, options }: Driver,
+        buildOptions: { shorten?: boolean; joiner?: string } | string,
+        ...alias: string[]
+    ): string {
         if (typeof buildOptions === "string") {
             alias.unshift(buildOptions);
             buildOptions = { shorten: false, joiner: "_" };
         } else {
-            buildOptions = Object.assign({ shorten: false, joiner: "_" }, buildOptions);
+            buildOptions = Object.assign(
+                { shorten: false, joiner: "_" },
+                buildOptions
+            );
         }
 
-        const newAlias = alias.length === 1 ? alias[0] : alias.join(buildOptions.joiner);
-        if (maxAliasLength && maxAliasLength > 0 && newAlias.length > maxAliasLength) {
+        let newAlias =
+            alias.length === 1 ? alias[0] : alias.join(buildOptions.joiner);
+
+        if (
+            maxAliasLength &&
+            maxAliasLength > 0 &&
+            newAlias.length > maxAliasLength
+        ) {
             if (buildOptions.shorten === true) {
                 const shortenedAlias = shorten(newAlias);
                 if (shortenedAlias.length < maxAliasLength) {
@@ -89,14 +118,25 @@ export class DriverUtils {
             return hash(newAlias, { length: maxAliasLength });
         }
 
+
+        if (options.type === "firebird") newAlias = escape(newAlias);
+
         return newAlias;
     }
 
     /**
      * @deprecated use `buildAlias` instead.
      */
-    static buildColumnAlias({ maxAliasLength }: Driver, buildOptions: { shorten?: boolean, joiner?: string } | string, ...alias: string[]) {
-        return this.buildAlias({ maxAliasLength } as Driver, buildOptions, ...alias);
+    static buildColumnAlias(
+        { maxAliasLength }: Driver,
+        buildOptions: { shorten?: boolean; joiner?: string } | string,
+        ...alias: string[]
+    ) {
+        return this.buildAlias(
+            { maxAliasLength } as Driver,
+            buildOptions,
+            ...alias
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -111,8 +151,10 @@ export class DriverUtils {
         const firstSlashes = url.indexOf("//");
         const preBase = url.substr(firstSlashes + 2);
         const secondSlash = preBase.indexOf("/");
-        const base = (secondSlash !== -1) ? preBase.substr(0, secondSlash) : preBase;
-        let afterBase = (secondSlash !== -1) ? preBase.substr(secondSlash + 1) : undefined;
+        const base =
+            secondSlash !== -1 ? preBase.substr(0, secondSlash) : preBase;
+        let afterBase =
+            secondSlash !== -1 ? preBase.substr(secondSlash + 1) : undefined;
         // remove mongodb query params
         if (afterBase && afterBase.indexOf("?") !== -1) {
             afterBase = afterBase.substr(0, afterBase.indexOf("?"));
@@ -137,7 +179,7 @@ export class DriverUtils {
             username: decodeURIComponent(username),
             password: decodeURIComponent(password),
             port: port ? parseInt(port) : undefined,
-            database: afterBase || undefined
+            database: afterBase || undefined,
         };
     }
 
@@ -149,8 +191,10 @@ export class DriverUtils {
         const firstSlashes = url.indexOf("//");
         const preBase = url.substr(firstSlashes + 2);
         const secondSlash = preBase.indexOf("/");
-        const base = (secondSlash !== -1) ? preBase.substr(0, secondSlash) : preBase;
-        let afterBase = (secondSlash !== -1) ? preBase.substr(secondSlash + 1) : undefined;
+        const base =
+            secondSlash !== -1 ? preBase.substr(0, secondSlash) : preBase;
+        let afterBase =
+            secondSlash !== -1 ? preBase.substr(secondSlash + 1) : undefined;
         let afterQuestionMark = "";
         let host = undefined;
         let port = undefined;
@@ -160,16 +204,18 @@ export class DriverUtils {
         let optionsObject: any = {};
 
         if (afterBase && afterBase.indexOf("?") !== -1) {
-
             // split params
-            afterQuestionMark = afterBase.substr((afterBase.indexOf("?") + 1), afterBase.length);
+            afterQuestionMark = afterBase.substr(
+                afterBase.indexOf("?") + 1,
+                afterBase.length
+            );
 
             const optionsList = afterQuestionMark.split("&");
             let optionKey: string;
             let optionValue: string;
 
             // create optionsObject for merge with connectionUrl object before return
-            optionsList.forEach(optionItem => {
+            optionsList.forEach((optionItem) => {
                 optionKey = optionItem.split("=")[0];
                 optionValue = optionItem.split("=")[1];
                 optionsObject[optionKey] = optionValue;
@@ -206,7 +252,7 @@ export class DriverUtils {
             username: decodeURIComponent(username),
             password: decodeURIComponent(password),
             port: port ? parseInt(port) : undefined,
-            database: afterBase || undefined
+            database: afterBase || undefined,
         };
 
         // Loop to set every options in connectionUrl to object
