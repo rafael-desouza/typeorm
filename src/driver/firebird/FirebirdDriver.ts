@@ -48,6 +48,11 @@ export class FirebirdDriver implements Driver {
     transactionSupport = "nested" as const;
 
     /**
+     * Max length allowed by FIREBIRD for aliases (identifiers).
+     * @see https://firebirdsql.org/en/firebird-technical-specifications/     */
+    maxAliasLength = 31;
+
+    /**
      * Returns true if driver supports fulltext indices.
      */
     isFullTextColumnTypeSupported(): boolean {
@@ -62,7 +67,6 @@ export class FirebirdDriver implements Driver {
         "double precision",
         "decimal",
         "numeric",
-        "date",
         "timestamp",
         "time",
         "char",
@@ -97,6 +101,9 @@ export class FirebirdDriver implements Driver {
         updateDate: "timestamp",
         updateDatePrecision: 6,
         updateDateDefault: "NOW",
+        deleteDate: "timestamp",
+        deleteDatePrecision: 6,
+        deleteDateNullable: true,
         version: "int",
         treeLevel: "int",
         migrationId: "int",
@@ -114,8 +121,6 @@ export class FirebirdDriver implements Driver {
         metadataTable: "varchar",
         metadataName: "varchar",
         metadataValue: "text",
-        deleteDate: "timestamp",
-        deleteDateNullable: true,
     };
     connection: Connection;
     /**
@@ -142,7 +147,6 @@ export class FirebirdDriver implements Driver {
         this.options = connection.options as FirebirdConnectionOptions;
         this.firebirdOptions = connection.options as Options;
 
-        // load mysql package
         this.firebird = PlatformTools.load("node-firebird");
     }
 
@@ -231,7 +235,11 @@ export class FirebirdDriver implements Driver {
         }); // todo: make replace only in value statements, otherwise problems
         return [sql, escapedParameters];
     }
-    escape(columnName: string): string {
+    escape(columnName: string, type: string): string {
+        if (type === "doublequoted") {
+            return `"${columnName}"`;
+        }
+
         return columnName.toUpperCase();
     }
 
@@ -263,7 +271,6 @@ export class FirebirdDriver implements Driver {
 
         if (target instanceof TableForeignKey) {
             const parsed = this.parseTableName(target.referencedTableName);
-
             return {
                 database:
                     target.referencedDatabase ||
@@ -277,7 +284,6 @@ export class FirebirdDriver implements Driver {
 
         if (target instanceof EntityMetadata) {
             // EntityMetadata tableName is never a path
-
             return {
                 database: target.database || driverDatabase,
                 schema: target.schema || driverSchema,
@@ -286,7 +292,7 @@ export class FirebirdDriver implements Driver {
         }
 
         const parts = target.split(".");
-
+        console.log(parts.length > 1 ? parts[1] : parts[0]);
         return {
             database: driverDatabase,
             schema: (parts.length > 1 ? parts[0] : undefined) || driverSchema,
@@ -359,7 +365,7 @@ export class FirebirdDriver implements Driver {
         } else if (column.type === String || column.type === "nvarchar") {
             return "varchar";
         } else if (column.type === Date) {
-            return "datetime";
+            return "timestamp";
         } else if ((column.type as any) === Buffer) {
             return "blob";
         } else if (column.type === Boolean) {
@@ -392,6 +398,7 @@ export class FirebirdDriver implements Driver {
             return `${defaultValue}`;
         }
     }
+
     normalizeIsUnique(column: ColumnMetadata): boolean {
         return column.entityMetadata.indices.some(
             (idx) =>
