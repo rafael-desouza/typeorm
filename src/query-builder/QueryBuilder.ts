@@ -504,10 +504,11 @@ export abstract class QueryBuilder<Entity> {
     /**
      * Escapes table name, column name or alias name using current database's escaping character.
      */
-    escape(name: string): string {
+    escape(name: string, driver?: string): string {
         if (!this.expressionMap.disableEscaping)
             return name;
-        return this.connection.driver.escape(name);
+
+        return this.connection.driver.escape(name, driver);
     }
 
     /**

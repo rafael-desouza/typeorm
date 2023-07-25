@@ -15,6 +15,7 @@ import {SapConnectionOptions} from "../driver/sap/SapConnectionOptions";
 import {AuroraDataApiPostgresConnectionOptions} from "../driver/aurora-data-api-pg/AuroraDataApiPostgresConnectionOptions";
 import {BetterSqlite3ConnectionOptions} from "../driver/better-sqlite3/BetterSqlite3ConnectionOptions";
 import {CapacitorConnectionOptions} from "../driver/capacitor/CapacitorConnectionOptions";
+import { FirebirdConnectionOptions } from "../driver/firebird/FirebirdConnectionOptions";
 
 
 /**
@@ -23,20 +24,21 @@ import {CapacitorConnectionOptions} from "../driver/capacitor/CapacitorConnectio
  * Consumer must provide connection options for each of your connections.
  */
 export type ConnectionOptions =
-    MysqlConnectionOptions|
-    PostgresConnectionOptions|
-    CockroachConnectionOptions|
-    SqliteConnectionOptions|
-    SqlServerConnectionOptions|
-    SapConnectionOptions|
-    OracleConnectionOptions|
-    CordovaConnectionOptions|
-    NativescriptConnectionOptions|
-    ReactNativeConnectionOptions|
-    SqljsConnectionOptions|
-    MongoConnectionOptions|
-    AuroraDataApiConnectionOptions|
-    AuroraDataApiPostgresConnectionOptions|
-    ExpoConnectionOptions|
-    BetterSqlite3ConnectionOptions |
-    CapacitorConnectionOptions;
+    | MysqlConnectionOptions
+    | PostgresConnectionOptions
+    | CockroachConnectionOptions
+    | SqliteConnectionOptions
+    | SqlServerConnectionOptions
+    | SapConnectionOptions
+    | OracleConnectionOptions
+    | CordovaConnectionOptions
+    | NativescriptConnectionOptions
+    | ReactNativeConnectionOptions
+    | SqljsConnectionOptions
+    | MongoConnectionOptions
+    | AuroraDataApiConnectionOptions
+    | AuroraDataApiPostgresConnectionOptions
+    | ExpoConnectionOptions
+    | BetterSqlite3ConnectionOptions
+    | CapacitorConnectionOptions
+    | FirebirdConnectionOptions;

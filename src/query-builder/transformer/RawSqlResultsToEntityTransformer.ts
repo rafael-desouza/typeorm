@@ -146,7 +146,10 @@ export class RawSqlResultsToEntityTransformer {
 
             // if user does not selected the whole entity or he used partial selection and does not select this particular column
             // then we don't add this column and its value into the entity
-            if (!this.expressionMap.selects.find(select => select.selection === alias.name || select.selection === alias.name + "." + column.propertyPath))
+            if (!this.expressionMap.selects.find(select =>
+                select.selection === alias.name ||
+                select.selection === alias.name + "." + column.propertyPath ||
+                select.selection.startsWith(alias.name + "." + column.databasePath + " as ")))
                 return;
 
             column.setEntityValue(entity, this.driver.prepareHydratedValue(value, column));
@@ -213,22 +216,22 @@ export class RawSqlResultsToEntityTransformer {
     protected transformRelationIds(rawSqlResults: any[], alias: Alias, entity: ObjectLiteral, metadata: EntityMetadata): boolean {
         let hasData = false;
         this.rawRelationIdResults.forEach((rawRelationIdResult, index) => {
-          if (rawRelationIdResult.relationIdAttribute.parentAlias !== alias.name) 
+          if (rawRelationIdResult.relationIdAttribute.parentAlias !== alias.name)
             return;
-    
+
           const relation = rawRelationIdResult.relationIdAttribute.relation;
           const valueMap = this.createValueMapFromJoinColumns(relation, rawRelationIdResult.relationIdAttribute.parentAlias, rawSqlResults);
           if (valueMap === undefined || valueMap === null) {
             return;
           }
-    
+
           // prepare common data for this call
           this.prepareDataForTransformRelationIds();
-    
+
           // Extract idMaps from prepared data by hash
           const hash = this.hashEntityIds(relation, valueMap);
           const idMaps = this.relationIdMaps[index][hash] || [];
-    
+
           // Map data to properties
           const properties = rawRelationIdResult.relationIdAttribute.mapToPropertyPropertyPath.split(".");
           const mapToProperty = (properties: string[], map: ObjectLiteral, value: any): any => {
@@ -253,7 +256,7 @@ export class RawSqlResultsToEntityTransformer {
             hasData = hasData || idMaps.length > 0;
           }
         });
-    
+
         return hasData;
     }
 
@@ -411,7 +414,7 @@ export class RawSqlResultsToEntityTransformer {
                 return agg;
             }, {});
         });
-    
+
     }
 
     /**
