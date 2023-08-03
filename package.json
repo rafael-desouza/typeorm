@@ -1,7 +1,7 @@
 {
-  "name": "firebird-typeorm",
+  "name": "typeorm-with-firebird",
   "private": false,
-  "version": "0.2.45",
+  "version": "0.1.0",
   "description": "Data-Mapper ORM for TypeScript, ES7, ES6, ES5. Supports MySQL, Firebird, PostgreSQL, MariaDB, SQLite, MS SQL Server, Oracle, MongoDB databases.",
   "license": "MIT",
   "readmeFilename": "README.md",

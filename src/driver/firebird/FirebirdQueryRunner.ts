@@ -306,7 +306,6 @@ export class FirebirdQueryRunner
                         const queryResult = new QueryResult();
                         queryResult.records = convertedResult;
 
-
                         return ok(queryResult);
                     });
                 };
@@ -319,6 +318,12 @@ export class FirebirdQueryRunner
                         parameters || [],
                         callback
                     );
+
+                    //Free the connection
+                    this.driver.firebirdDatabase.detach();
+
+
+
                 }
             } catch (err) {
                 fail(err);
