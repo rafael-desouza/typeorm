@@ -4,7 +4,6 @@ import {ConnectionOptions} from "./ConnectionOptions";
 import {PlatformTools} from "../platform/PlatformTools";
 import {ConnectionOptionsEnvReader} from "./options-reader/ConnectionOptionsEnvReader";
 import {ConnectionOptionsYmlReader} from "./options-reader/ConnectionOptionsYmlReader";
-import {ConnectionOptionsXmlReader} from "./options-reader/ConnectionOptionsXmlReader";
 import { TypeORMError } from "../error";
 import { isAbsolute } from "../util/PathUtils";
 import {importOrRequireFile} from "../util/ImportUtils";
@@ -132,10 +131,7 @@ export class ConnectionOptionsReader {
         } else if (foundFileFormat === "yaml") {
             connectionOptions = await new ConnectionOptionsYmlReader().read(configFile);
 
-        } else if (foundFileFormat === "xml") {
-            connectionOptions = await new ConnectionOptionsXmlReader().read(configFile);
         }
-
         // normalize and return connection options
         if (connectionOptions) {
             return this.normalizeConnectionOptions(connectionOptions);
